@@ -16,7 +16,6 @@ export class MainPage extends LitElement {
     this.identificacionC = "";
     this.nombreC = "";
     this.tiempo = "";
-    this.equipoC = "";
     this.estadoC = "";
     this.identificacionE="";
     this.nombreE="";
@@ -82,30 +81,40 @@ export class MainPage extends LitElement {
   abrirModal() {
     const miModal = this.shadowRoot.querySelector("#miModal");
     miModal.style.display = "block";
+    miModal.classList.remove('oculto');
   }
 
   cerrarModal() {
     const miModal = this.shadowRoot.querySelector("#miModal");
     miModal.style.display = "none";
+    miModal.classList.add('oculto');
   }
 
   abrirModal1() {
     const miModal1 = this.shadowRoot.querySelector("#miModal1");
     miModal1.style.display = "block";
+    miModal1.classList.remove('oculto');
   }
 
   cerrarModal1() {
     const miModal1 = this.shadowRoot.querySelector("#miModal1");
     miModal1.style.display = "none";
+     miModal1.classList.add('oculto');
   }
   abrirModal2() {
     const miModal2 = this.shadowRoot.querySelector("#miModal2");
     miModal2.style.display = "block";
+    miModal2.classList.remove('oculto');
   }
 
   cerrarModal2() {
     const miModal2 = this.shadowRoot.querySelector("#miModal2");
     miModal2.style.display = "none";
+    miModal2.classList.add('oculto');
+  }
+
+  modal_oculto() {
+    display: none;
   }
 
 
@@ -145,6 +154,7 @@ export class MainPage extends LitElement {
 
   actualizarCampañaAsociada(e) {
     this.campaña = e.target.value;
+    this.campanaE = e.target.value;
   }
 
 
@@ -153,14 +163,12 @@ export class MainPage extends LitElement {
       this.identificacionC &&
       this.nombreC &&
       this.tiempo &&
-      this.equipoC &&
       this.estadoC
     ) {
       const nuevaCampaña = {
         identificacionC: this.identificacionC,
         nombreC: this.nombreC,
         tiempo: this.tiempo,
-        equipoC: this.equipoC,
         estadoC: this.estadoC,
       };
       this.campanas1 = [...this.campanas1, nuevaCampaña];
@@ -175,7 +183,6 @@ export class MainPage extends LitElement {
       this.identificacionC = "";
       this.nombreC = "";
       this.tiempo = "";
-      this.equipoC = "";
       this.estadoC = "";
   
       // Asegúrate de que se actualicen las campañas disponibles
@@ -187,65 +194,77 @@ export class MainPage extends LitElement {
   }
 
   registrarEquipo() {
-    console.log("Registrar Equipos...")
     if (
       this.identificacionE &&
       this.nombreE &&
       this.estadoE &&
       this.campanaE &&
       this.telefonoE &&
-      this.cantIntegrantes  
-
-     ) {
+      this.cantIntegrantes
+    ) {
       const nuevoEquipo = {
         identificacionE: this.identificacionE,
         nombreE: this.nombreE,
         estadoE: this.estadoE,
         campanaE: this.campanaE,
         telefonoE: this.telefonoE,
-        cantIntegrantes: this.cantIntegrantes,
+        cantIntegrantes: this.cantIntegrantes
       };
       this.equipos = [...this.equipos, nuevoEquipo];
-  
-      console.log("Equipos: ", this.equipos);
-  
+
+      console.log("Equipos:", this.equipos);
+
       this.identificacionE = "";
       this.nombreE = "";
-      this.estadoE= "";
-      this.telefonoE="";
-      this.cantIntegrantes="";
-  
-      // Asegúrate de que se actualicen las campañas disponibles
-      this.actualizarCampañasDisponibles1();
+      this.estadoE = "";
+      this.campanaE = "";
+      this.telefonoE = "";
+      this.cantIntegrantes = "";
+
+      this.actualizarCards();
       this.mostrarTablaEquipos(1);
+      this.requestUpdate();
+    }else{
+      console.log("Pana Algo Esta Mal Revise Pues")
+      console.log("identificacionE:", this.identificacionE);
+      console.log("nombreE:", this.nombreE);
+      console.log("EstadoE:", this.estadoE);
+      console.log("campañaE:", this.campanaE);
+      console.log("telefonoE:", this.telefonoE);
+      console.log("Cantidad De Integrantes:", this.cantIntegrantes);
     }
-  }
+}
 
-  buscarUsuario() {
-    console.log("Buscando usuario...");
-    console.log("Telefono", this.telefono);
-    console.log("Nombre:", this.nombre);
+async buscarUsuario() {
+  console.log("Buscando usuario...");
+  console.log("Telefono:", this.tel);
+  console.log("Nombre:", this.nombre);
 
-    if (this.telefono && this.nombre) {
-      const resultados = this.usuarios.filter((usuario) => {
-        const coincideNumero =
-          this.telefono && usuario.tel.includes(this.telefono);
-        const coincideNombre =
-          this.nombre && usuario.nombre.includes(this.nombre);
-        return coincideNumero && coincideNombre;
-      });
-      console.log("Encontrado...");
+  if (this.tel && this.nombre) {
+    console.log("Realizando búsqueda...");
 
-      if (resultados.length > 0) {
-        this.cantidadLlamadas += 1; // Aumenta la cantidad de llamadas cuando se encuentra un usuario
-        console.log("Cantidad de llamadas actualizada:", this.cantidadLlamadas);
-        this.actualizarCards();
-        alert("Llamada Iniciada");
-      } else {
-        alert("No Se Encontro Al Usuario");
-      }
+    const resultados = this.usuarios.filter((usuario) => {
+      const coincideNumero = this.tel && usuario.telefono.includes(this.tel);
+      const coincideNombre = this.nombre && usuario.nombre.includes(this.nombre);
+      return coincideNumero && coincideNombre;
+    });
+
+    console.log("Resultados:", resultados);
+
+    if (resultados.length > 0) {
+      this.cantidadLlamadas += 1;
+      console.log("Cantidad de llamadas actualizada:", this.cantidadLlamadas);
+      await this.actualizarCards();
+      alert("Llamada Iniciada");
+    } else {
+      await this.actualizarCards();
+      alert("No Se Encontró Al Usuario");
     }
+  } else {
+    console.log("nombre", this.nombre);
+    console.log("telefono", this.tel);
   }
+}
 
   //! Actualizacion o Reactivacion De Campos Activos y Ausentes
   actualizarCards() {
@@ -303,7 +322,7 @@ export class MainPage extends LitElement {
 
   //?Mostrar Tabla Usuarios
   mostrarTablaUsuarios(y) {
-    this.mostrarUsuarios = this.usuarios;
+    this.mostrarUsuarios = y === 1; // Establecer la propiedad como valor booleano
     this.mostrarCampanas = false;
     this.mostrarEquipos = false;
   
@@ -352,7 +371,7 @@ export class MainPage extends LitElement {
   //? Mostrar Tabla Campañas
   mostrarTablaCampanas(y) {
     this.mostrarUsuarios = false;
-    this.mostrarCampanas = true;
+    this.mostrarCampanas = y === 1;
     this.mostrarEquipos = false;
 
     if (y == 1) {
@@ -363,7 +382,6 @@ export class MainPage extends LitElement {
               <th>Identificación Campaña</th>
               <th>Nombre Campaña</th>
               <th>Tiempo</th>
-              <th>Equipo</th>
               <th>Estado Camapaña</th>
               <th>Activar Camapaña</th>
               <th>Desactivar Camapaña</th>
@@ -377,7 +395,6 @@ export class MainPage extends LitElement {
                   <td>${campana1.identificacionC}</td>
                   <td>${campana1.nombreC}</td>
                   <td>${campana1.tiempo}</td>
-                  <td>${campana1.equipoC}</td>
                   <td>${campana1.estadoC}</td>
                   <td>
                   <button @click="${() => this.activarCampana(campana1)}">Activar</button>
@@ -392,6 +409,7 @@ export class MainPage extends LitElement {
         </table>
       `;
     }
+        return this.datos;
   }
 
 
@@ -424,7 +442,7 @@ export class MainPage extends LitElement {
   mostrarTablaEquipos(y) {
     this.mostrarUsuarios = false;
     this.mostrarCampanas = false;
-    this.mostrarEquipos = true;
+    this.mostrarEquipos = y === 1;
 
     if (y == 1) {
       this.datos = html`
@@ -443,11 +461,12 @@ export class MainPage extends LitElement {
           ${this.equipos.map(
             (equipo) => html`
               <tr>
-                <td>${equipo.identificacionC}</td>
-                <td>${equipo.nombreC}</td>
-                <td>${equipo.tiempo}</td>
-                <td>${equipo.equipoC}</td>
-                <td>${equipo.estadoC}</td>
+                <td>${equipo.identificacionE}</td>
+                <td>${equipo.nombreE}</td>
+                <td>${equipo.estadoE}</td>
+                <td>${equipo.campanaE}</td>
+                <td>${equipo.telefonoE}</td>
+                <td>${equipo.cantIntegrantes}</td>
       
               </tr>
             `
@@ -456,7 +475,7 @@ export class MainPage extends LitElement {
         </table>
       `;
     }
-    return this.datoss
+    return this.datos
   }
 
   mostrarTablaUsuariosFiltrados(y) {
@@ -532,24 +551,24 @@ export class MainPage extends LitElement {
       <div class="bg-light vw-100 vh-100 d-flex">
         <div class="bg-secondary1 w-25  m-3 border-20 p-3">
           <div class="bg-color-secondary">
-            <button
-              class="w-100 mt-5 p-2 border-10"
-              @click="${(e) => this.mostrarTablaUsuarios(1)}"
-            >
-              <i class="fas fa-user"></i>Usuarios
-            </button>
-            <button
-              class="w-100 mt-5 p-2 border-10"
-              @click="${(e) => this.mostrarTablaCampanas(1)}"
-            >
-              <i class="fas fa-bullhorn"></i>Campañas
-            </button>
-            <button
-              class="w-100 mt-5 p-2 border-10"
-              @click="${(e) => this.mostrarTablaEquipos(1)}"
-            >
-              <i class="fas fa-users"></i>Equipos
-            </button>
+          <button
+          class="w-100 mt-5 p-2 border-10"
+          @click="${(e) => this.mostrarTablaUsuarios(1)}"
+        >
+          <i class="fas fa-user"></i>Usuarios
+        </button>
+        <button
+          class="w-100 mt-5 p-2 border-10"
+          @click="${(e) => this.mostrarTablaCampanas(1)}"
+        >
+          <i class="fas fa-bullhorn"></i>Campañas
+        </button>
+        <button
+          class="w-100 mt-5 p-2 border-10"
+          @click="${(e) => this.mostrarTablaEquipos(1)}"
+        >
+          <i class="fas fa-users"></i>Equipos
+        </button>
             <br /><br />
           </div>
         </div>
@@ -627,7 +646,7 @@ export class MainPage extends LitElement {
                     <input
                       class="m-2 p-2 border-10 border-0"
                       type="text"
-                      @input="${(e) => (this.telefono = e.target.value)}"
+                      @input="${(e) => (this.tel = e.target.value)}"
                       placeholder="Numero"
                   /></i>
                 </div>
@@ -682,10 +701,11 @@ export class MainPage extends LitElement {
                   </button>
                 </div>
 
+
                 <div class="col">
                   <button
-                    id="botonAbrirModal"
-                    class="bg-icon text-white p-2 text-big border-10 float-end"
+                    id="botonAbrirModal" 
+                    class="bg-icon text-white p-2 text-big border-10 float-end>"
                     @click="${this.abrirModal1}"
                   >
                     Nueva Campaña<i class="fas fa-plus fa-beat-fade"></i>
@@ -705,7 +725,7 @@ export class MainPage extends LitElement {
                     Nuevo Equipo<i class="fas fa-plus fa-beat-fade"></i>
                   </button>
 
-                  <div id="miModal2">
+                  <div id="miModal2" class="modal oculto">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -806,7 +826,7 @@ export class MainPage extends LitElement {
 
 <!--  ------------------------------------------------Modal De Campaña------------------------------------------------  -->
 
-                  <div id="miModal1">
+                  <div id="miModal1" class="modal oculto">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -846,16 +866,6 @@ export class MainPage extends LitElement {
                           </div>
 
                           <div class="form-group">
-                            <label>Equipo De Campaña:</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              .value="${this.equipoC}"
-                              @input="${(e) => (this.equipoC = e.target.value)}"
-                            />
-                          </div>
-
-                          <div class="form-group">
                             <label>Estado De La Camapaña:</label>
                             <input
                               type="text"
@@ -887,7 +897,7 @@ export class MainPage extends LitElement {
                   </div>
                 </div>
 
-                <div id="miModal">
+                <div id="miModal" class="modal oculto">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -980,20 +990,16 @@ export class MainPage extends LitElement {
                 class="bg-color-secondary1 d-flex justify-content-center  align-items-center h-100"
               >
                 <div class="border-dark col   w-75 h-75">
-                  ${this.mostrarTablaUsuarios(0)}
-                  ${this.mostrarTablaCampanas(0)} 
-                  ${this.mostrarTablaEquipos(0)}
+                ${this.mostrarUsuarios ? this.mostrarTablaUsuarios(0) : ''}
+                ${this.mostrarCampanas ? this.mostrarTablaCampanas(0) : ''}
+                ${this.mostrarEquipos ? this.mostrarTablaEquipos(0) : ''}
 
                   <button
                     @click="${() => this.mostrarTablaUsuariosFiltrados(1)}"
                   >
                     Mostrar Usuarios Filtrados
                   </button>
-                  <button
-                    @click="${() => this.actualizarCampañasDisponibles1()}"
-                  >
-                    Pruebita pss
-                  </button>
+
                 </div>
               </div>
             </div>
