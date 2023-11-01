@@ -710,6 +710,7 @@ async buscarUsuario() {
                   >
                     Nueva Campaña<i class="fas fa-plus fa-beat-fade"></i>
                   </button>
+
                   <button
                     id="botonAbrirModal"
                     class="bg-icon text-white p-2 text-big border-10 float-end"
@@ -717,6 +718,7 @@ async buscarUsuario() {
                   >
                     Nuevo Usuario<i class="fas fa-plus fa-beat-fade"></i>
                   </button>
+                  
                   <button
                     id="botonAbrirModal"
                     class="bg-icon text-white p-2 text-big border-10 float-end"
@@ -830,7 +832,7 @@ async buscarUsuario() {
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title">Nuevo Usuario</h5>
+                          <h5 class="modal-title">Nueva Campaña</h5>
                         </div>
                         <div class="modal-body">
                           <!-- Formulario para ingresar datos de usuario -->
@@ -846,7 +848,7 @@ async buscarUsuario() {
                           </div>
 
                           <div class="form-group">
-                            <label>Nombre de Camapaña:</label>
+                            <label>Nombre de Campaña:</label>
                             <input
                               type="text"
                               class="form-control"
@@ -866,7 +868,7 @@ async buscarUsuario() {
                           </div>
 
                           <div class="form-group">
-                            <label>Estado De La Camapaña:</label>
+                            <label>Estado De La Campaña:</label>
                             <input
                               type="text"
                               class="form-control"
